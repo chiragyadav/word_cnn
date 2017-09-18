@@ -1,0 +1,9 @@
+.ipynb_checkpoints/
+notebooks/
+*.json
+*.csv
+*.txt
+*.ipynb
+runs/
+logs/
+__pycache__/

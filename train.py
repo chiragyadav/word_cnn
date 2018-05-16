@@ -23,7 +23,7 @@ if not os.path.exists(log_file):
     with open(log_file, 'w') as f:
         pass
     
-logging.basicConfig(filename=log_file,level=logging.DEBUG,filemode='w',format='%(asctime)s %(message)s')
+logging.basicConfig(filename=log_file, level=logging.DEBUG,filemode='w',format='%(asctime)s %(message)s')
 logger = logging.getLogger(__name__)
 
 def train_cnn():
@@ -49,7 +49,7 @@ def train_cnn():
     max_document_length = params['max_document_length']
     logger.debug('The maximum length set for all transactions: {}'.format(max_document_length))
     
-    vocab_processor = learn.preprocessing.VocabularyProcessor(max_document_length,tokenizer_fn=data_helper.tokenizer)
+    vocab_processor = learn.preprocessing.VocabularyProcessor(max_document_length, tokenizer_fn=data_helper.tokenizer)
     #x_raw = x_raw.apply(lambda x: str(x))
     x = np.array(list(vocab_processor.fit_transform(x_raw)))
     y = np.array(y_raw)
@@ -77,7 +77,7 @@ def train_cnn():
     shuffle_indices = np.random.permutation(np.arange(len(y_)))
     x_shuffled = x_[shuffle_indices]
     y_shuffled = y_[shuffle_indices]
-    x_train, x_dev, y_train, y_dev = train_test_split(x_shuffled, y_shuffled,stratify=y_shuffled, test_size=0.1,random_state=42)
+    x_train, x_dev, y_train, y_dev = train_test_split(x_shuffled, y_shuffled,stratify=y_shuffled, test_size=params['val_set_ratio'],random_state=42)
     
     #x_dev.tocsv(os.path.join(dev_set_dir,'x_test.csv'),index=None)
     #x_dev.tocsv(os.path.join(dev_set_dir,'y_test.csv'),index=None)
@@ -110,7 +110,7 @@ def train_cnn():
                     l2_reg_lambda=params['l2_reg_lambda'])
 
             global_step = tf.Variable(0, name="global_step", trainable=False)
-            optimizer = tf.train.AdamOptimizer(1e-4)
+            optimizer = tf.train.AdamOptimizer(params['learning_rate'])
             grads_and_vars = optimizer.compute_gradients(cnn.loss)
             train_op = optimizer.apply_gradients(grads_and_vars, global_step=global_step)
             
